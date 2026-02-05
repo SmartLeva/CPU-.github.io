@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Архитектура современных процессоров</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg,  0%, 100%);
+            color: #fff;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: 40px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+    h1{
+        color: #00d4ff
+    }
+    
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #a5b1c2;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        
+        .soc-visualization {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .soc-container {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            background: linear-gradient(to bottom right, );
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .soc-component {
+            position: absolute;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 10px;
+            text-align: center;
+            border: 2px solid transparent;
+        }
+        
+        .soc-component:hover {
+            transform: scale(1.05);
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+        }
+        
+        .soc-component i {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+        
+        .soc-component span {
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .component-info {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .info-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #4facfe;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .info-title i {
+            font-size: 2rem;
+        }
+        
+        .info-description {
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            color: #e0e0e0;
+        }
+        
+        .info-details {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .detail-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .detail-item:last-child {
+            margin-bottom: 0;
+            border-bottom: none;
+        }
+        
+    
+        
+        .detail-text {
+            color: #b0b0b0;
+        }
+        
+        .instructions {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 30px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .instructions p {
+            color: #a5b1c2;
+        }
+        
+        .highlight {
+            color: #00f2fe;
+            font-weight: 600;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #a5b1c2;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .soc-container {
+                height: 400px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+        }
+        
+        /* Анимация для активного компонента */
+        .active-component {
+            border-color: #00f2fe !important;
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.5) !important;
+            z-index: 10;
+        }
+    </style>
+<body>
+ 
+    <!-- Навигация -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                
+            </div>
+            <ul class="nav-menu">
+               <li><a href="#relevance">Актуальность</a></li>
+                <li><a href="#evolution">Эволюция</a></li>
+                <li><a href="#Interactive">SoC</a></li>
+                <li><a href="#comparison">Сравнение</a></li>
+                <li><a href="#future">Будущее</a></li>
+            </ul>
+            <button class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Герой-секция -->
+        <div class="hero-content">
+            <h1><br>АРХИТЕКТУРА<br> 
+            СОВРЕМЕННЫХ ПРОЦЕССОРОВ</h1>
+             <a href="#evolution" class="cta-button">
+                Начать исследование <i class="fas fa-arrow-down"></i>
+            </a>
+        </div>
+        <div class="hero-animation">
+            <div class="cpu-chip">
+                <div class="core core-1"></div>
+                <div class="core core-2"></div>
+                <div class="core core-3"></div>
+                <div class="core core-4"></div>
+                <div class="gpu-block"></div>
+                <div class="npu-block"></div>
+            </div>
+        </div>
+    <!-- Секция: Актуальность -->
+    <section class="section relevance" id="relevance">
+        <div class="container">
+            <h2>ПОЧЕМУ ЭТО ВАЖНО СЕЙЧАС?</h2>
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Конец закона Мура</h3>
+                    <p>Физические ограничения техпроцесса заставляют искать новые архитектурные решения вместо простого уменьшения транзисторов</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>Революция ИИ</h3>
+                    <p>Нейросетям нужны не просто быстрые, а специализированные процессоры с матричными вычислениями</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Энергоэффективность</h3>
+                    <p>Мобильность и экология требуют максимум производительности на ватт энергии</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Технологический суверенитет</h3>
+                    <p>Разработка собственных архитектур (Эльбрус, RISC-V) — вопрос национальной безопасности</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section timeline-section" id="evolution">
+        <div class="container">
+
+<h2>ЭВОЛЮЦИЯ: ОТ ОДНОГО ЯДРА К ГОРОДУ НА КРИСТАЛЛЕ</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-year">1970-80</div>
+                    <div class="timeline-content">
+                        <h3>Эра одноядерности</h3>
+                        <p>Одно ядро, фокус на повышении тактовой частоты. Архитектура фон Неймана</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2000-е</div>
+                    <div class="timeline-content">
+                        <h3>Многоядерная революция</h3>
+                        <p>Несколько одинаковых ядер. Параллелизм как ответ на тепловой барьер</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2010-е</div>
+                    <div class="timeline-content">
+                        <h3>Гетерогенность</h3>
+                        <p>Архитектуры big.LITTLE: сочетание мощных и энергоэффективных ядер</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2020-е</div>
+                    <div class="timeline-content">
+                        <h3>Специализация и SoC</h3>
+                        <p>System-on-Chip: CPU + GPU + NPU + DSP в одном кристалле</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <div class="container">
+        <header>
+           <center><h1>Интерактивная SoC</h1></center>
+            
+            <p class="subtitle">Изучите архитектуру System-on-a-Chip. Нажмите на любой компонент на схеме, чтобы узнать подробную информацию о его функциях и характеристиках.</p>
+        </header>
+        
+        <div class="main-content">
+            <section class="soc-visualization" id="Interactive">
+                <h2>Архитектура System-on-a-Chip</h2>
+                <div class="soc-container" id="socContainer">
+                    <!-- Компоненты будут добавлены через JavaScript -->
+                </div>
+            </section>
+            
+            <section class="component-info">
+                <h2 class="info-title"><i id="componentIcon" class="fas fa-microchip"></i> <span id="componentName">System-on-a-Chip</span></h2>
+                <p class="info-description" id="componentDescription">
+                    System-on-a-Chip (SoC) - это интегральная схема, которая объединяет все или большинство компонентов компьютера или другой электронной системы на одной микросхеме. 
+                    Выберите компонент на схеме слева, чтобы узнать о нем подробнее.
+                </p>
+                
+                <div class="info-details">
+                    <div class="detail-item">
+                        <div class="detail-title">Функция</div>
+                        <div class="detail-text" id="componentFunction">Центральный элемент системы, объединяющий все компоненты на одном кристалле</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-title">Техпроцесс</div>
+                        <div class="detail-text" id="componentTech">5-7 нм</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-title">Расположение</div>
+                        <div class="detail-text" id="componentLocation">Центр чипа</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-title">Примеры</div>
+                        <div class="detail-text" id="componentExamples">Apple A14 Bionic, Qualcomm Snapdragon 888, Samsung Exynos 2100</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+    <script>
+        // Данные о компонентах SoC
+        const socComponents = [
+            {
+                id: "cpu",
+                name: "Центральный процессор (CPU)",
+                icon: "fas fa-microchip",
+                color: "#ff6b6b",
+                top: "15%",
+                left: "35%",
+                width: "30%",
+                height: "18%",
+                description: "Центральный процессор (CPU) - это основной вычислительный блок SoC, который выполняет инструкции компьютерных программ. Современные SoC часто содержат многоядерные CPU для повышения производительности.",
+                function: "Выполнение арифметических и логических операций, управление выполнением программ",
+                tech: "5-7 нм, многоядерная архитектура (до 8+ ядер)",
+                location: "Центральная часть SoC",
+                examples: "ARM Cortex-A78, ARM Cortex-X1, Apple Firestorm"
+            },
+            {
+                id: "gpu",
+                name: "Графический процессор (GPU)",
+                icon: "fas fa-gamepad",
+                color: "#4ecdc4",
+                top: "15%",
+                left: "70%",
+                width: "25%",
+                height: "18%",
+                description: "Графический процессор (GPU) специализируется на обработке графических данных и вычислениях с плавающей запятой. В SoC GPU отвечает за отрисовку графики в играх, интерфейсах и приложениях.",
+                function: "Обработка графических данных, параллельные вычисления, рендеринг изображений",
+                tech: "5-7 нм, сотни вычислительных ядер",
+                location: "Правая верхняя часть SoC",
+                examples: "ARM Mali-G78, Adreno 660, Apple GPU (4 ядра)"
+            },
+            {
+                id: "ram",
+                name: "Оперативная память (RAM)",
+                icon: "fas fa-memory",
+                color: "#ffd166",
+                top: "40%",
+                left: "75%",
+                width: "20%",
+                height: "25%",
+                description: "Оперативная память (RAM) обеспечивает временное хранение данных и инструкций, к которым процессор должен иметь быстрый доступ. В современных SoC часто используется память типа LPDDR5.",
+                function: "Временное хранение данных и инструкций для быстрого доступа процессора",
+                tech: "LPDDR4X/LPDDR5, до 16 ГБ",
+                location: "Правая боковая часть SoC",
+                examples: "LPDDR5 6400 МГц, LPDDR4X 4266 МГц"
+            },
+            {
+                id: "modem",
+                name: "Модем связи",
+                icon: "fas fa-satellite-dish",
+                color: "#06d6a0",
+                top: "70%",
+                left: "70%",
+                width: "25%",
+                height: "20%",
+                description: "Модем связи обеспечивает беспроводную связь, включая сотовые сети (5G, 4G LTE), Wi-Fi и Bluetooth. Это ключевой компонент для мобильных устройств.",
+                function: "Обеспечение беспроводной связи (5G, 4G LTE, Wi-Fi, Bluetooth)",
+                tech: "Интегрированный 5G-модем, поддержка mmWave и sub-6 ГГц",
+                location: "Нижняя правая часть SoC",
+                examples: "Qualcomm Snapdragon X60 5G, Samsung Exynos Modem 5123"
+            },
+            {
+                id: "dsp",
+                name: "Цифровой сигнальный процессор (DSP)",
+                icon: "fas fa-wave-square",
+                color: "#118ab2",
+                top: "40%",
+                left: "5%",
+                width: "25%",
+                height: "25%",
+                description: "Цифровой сигнальный процессор (DSP) специализируется на обработке сигналов в реальном времени, таких как аудио, видео и сенсорные данные. Он более эффективен для этих задач, чем универсальный CPU.",
+                function: "Обработка сигналов в реальном времени (аудио, видео, сенсорные данные)",
+                tech: "Специализированные ядра для обработки сигналов",
+                location: "Левая боковая часть SoC",
+                examples: "Qualcomm Hexagon, Cadence Tensilica"
+            },
+            {
+                id: "npu",
+                name: "Нейропроцессор (NPU)",
+                icon: "fas fa-brain",
+                color: "#9d4edd",
+                top: "70%",
+                left: "35%",
+                width: "30%",
+                height: "20%",
+                description: "Нейропроцессор (NPU) - это специализированный процессор для выполнения операций искусственного интеллекта и машинного обучения. Он оптимизирован для матричных вычислений, используемых в нейронных сетях.",
+                function: "Ускорение операций машинного обучения и искусственного интеллекта",
+                tech: "Специализированные AI-ядра, TOPS (триллионов операций в секунду)",
+                location: "Нижняя центральная часть SoC",
+                examples: "Apple Neural Engine, Qualcomm AI Engine, Huawei Da Vinci"
+            },
+            {
+                id: "storage",
+                name: "Контроллер памяти",
+                icon: "fas fa-hdd",
+                color: "#f15bb5",
+                top: "70%",
+                left: "5%",
+                width: "25%",
+                height: "20%",
+                description: "Контроллер памяти управляет взаимодействием между процессором и внутренней памятью устройства (флеш-памятью типа UFS или NVMe). Он обеспечивает высокоскоростной доступ к хранимым данным.",
+                function: "Управление доступом к внутренней памяти устройства",
+                tech: "UFS 3.1, NVMe, поддержка до 1 ТБ",
+                location: "Нижняя левая часть SoC",
+                examples: "UFS 3.1 контроллер, NVMe контроллер"
+            },
+            {
+                id: "io",
+                name: "Контроллеры ввода-вывода",
+                icon: "fas fa-exchange-alt",
+                color: "#ff9e00",
+                top: "15%",
+                left: "5%",
+                width: "25%",
+                height: "18%",
+                description: "Контроллеры ввода-вывода управляют периферийными устройствами, такими как дисплеи, камеры, сенсорные экраны и порты USB. Они обеспечивают взаимодействие SoC с внешними компонентами.",
+                function: "Управление периферийными устройствами (дисплей, камера, USB, сенсорный экран)",
+                tech: "Поддержка DisplayPort, MIPI, USB 3.2",
+                location: "Левая верхняя часть SoC",
+                examples: "Display Controller, Image Signal Processor (ISP), USB Controller"
+            }
+        ];
+
+        // Инициализация SoC визуализации
+        document.addEventListener('DOMContentLoaded', function() {
+            const socContainer = document.getElementById('socContainer');
+            
+            // Создание компонентов SoC
+            socComponents.forEach(component => {
+                const componentEl = document.createElement('div');
+                componentEl.className = 'soc-component';
+                componentEl.id = component.id;
+                componentEl.style.backgroundColor = component.color;
+                componentEl.style.top = component.top;
+                componentEl.style.left = component.left;
+                componentEl.style.width = component.width;
+                componentEl.style.height = component.height;
+                
+                componentEl.innerHTML = `
+                    <i class="${component.icon}"></i>
+                    <span>${component.name.split(' ')[0]}</span>
+                `;
+                
+                // Добавление обработчика клика
+                componentEl.addEventListener('click', () => {
+                    selectComponent(component);
+                });
+                
+                socContainer.appendChild(componentEl);
+            });
+            
+            // Добавление связей между компонентами
+            addInterconnects();
+            
+            // Выбираем CPU по умолчанию
+            selectComponent(socComponents[0]);
+        });
+        
+        // Функция для выбора компонента
+        function selectComponent(component) {
+            // Убираем активный класс у всех компонентов
+            document.querySelectorAll('.soc-component').forEach(el => {
+                el.classList.remove('active-component');
+            });
+            
+            // Добавляем активный класс выбранному компоненту
+            const selectedEl = document.getElementById(component.id);
+            selectedEl.classList.add('active-component');
+            
+            // Обновляем информацию о компоненте
+            document.getElementById('componentName').textContent = component.name;
+            document.getElementById('componentIcon').className = component.icon;
+            document.getElementById('componentDescription').textContent = component.description;
+            document.getElementById('componentFunction').textContent = component.function;
+            document.getElementById('componentTech').textContent = component.tech;
+            document.getElementById('componentLocation').textContent = component.location;
+            document.getElementById('componentExamples').textContent = component.examples;
+        }
+        
+        // Функция для добавления линий соединения между компонентами
+        function addInterconnects() {
+            const socContainer = document.getElementById('socContainer');
+            
+            // Создаем canvas для линий соединения
+            const canvas = document.createElement('canvas');
+            canvas.id = 'interconnectCanvas';
+            canvas.style.position = 'absolute';
+            canvas.style.top = '0';
+            canvas.style.left = '0';
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+            canvas.style.pointerEvents = 'none';
+            socContainer.appendChild(canvas);
+            
+            const ctx = canvas.getContext('2d');
+            canvas.width = socContainer.offsetWidth;
+            canvas.height = socContainer.offsetHeight;
+            
+            // Определяем соединения между компонентами
+            const connections = [
+                { from: 'cpu', to: 'gpu' },
+                { from: 'cpu', to: 'ram' },
+                { from: 'cpu', to: 'dsp' },
+                { from: 'cpu', to: 'npu' },
+                { from: 'cpu', to: 'io' },
+                { from: 'gpu', to: 'ram' },
+                { from: 'dsp', to: 'npu' },
+                { from: 'io', to: 'storage' },
+                { from: 'modem', to: 'cpu' }
+            ];
+            
+            // Функция для получения центра элемента
+            function getCenter(elementId) {
+                const el = document.getElementById(elementId);
+                if (!el) return { x: 0, y: 0 };
+                
+                const rect = el.getBoundingClientRect();
+                const containerRect = socContainer.getBoundingClientRect();
+                
+                return {
+                    x: rect.left + rect.width / 2 - containerRect.left,
+                    y: rect.top + rect.height / 2 - containerRect.top
+                };
+            }
+            
+            // Рисуем линии соединения
+            function drawConnections() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                connections.forEach(conn => {
+                    const fromCenter = getCenter(conn.from);
+                    const toCenter = getCenter(conn.to);
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(fromCenter.x, fromCenter.y);
+                    ctx.lineTo(toCenter.x, toCenter.y);
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    
+                    // Добавляем точку в начале и конце линии
+                    ctx.beginPath();
+                    ctx.arc(fromCenter.x, fromCenter.y, 3, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                    ctx.fill();
+                    
+                    ctx.beginPath();
+                    ctx.arc(toCenter.x, toCenter.y, 3, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                    ctx.fill();
+                });
+            }
+            
+            // Перерисовываем соединения при изменении размера окна
+            window.addEventListener('resize', () => {
+                canvas.width = socContainer.offsetWidth;
+                canvas.height = socContainer.offsetHeight;
+                drawConnections();
+            });
+            
+            setTimeout(drawConnections, 100);
+        }
+        </script>
+
+    <section class="section comparison" id="comparison">
+        <div class="container">
+            <h2>БИТВА АРХИТЕКТУР: x86 VS ARM VS RISC-V</h2>
+            <div class="comparison-table">
+                <div class="table-header">
+                    <div class="header-item">Характеристика</div>
+                    <div class="header-item">x86 (Intel/AMD)</div>
+                    <div class="header-item">ARM</div>
+                    <div class="header-item">RISC-V</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-title">Философия</div>
+                    <div class="row-data">CISC: сложные команды</div>
+                    <div class="row-data">RISC: простые команды</div>
+                    <div class="row-data">RISC: открытый стандарт</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-title">Сфера применения</div>
+                    <div class="row-data">ПК, серверы, ноутбуки</div>
+                    <div class="row-data">Мобильные, IoT, теперь и ПК</div>
+                    <div class="row-data">IoT, микроконтроллеры, будущее</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-title">Энергоэффективность</div>
+                    <div class="row-data">Ниже</div>
+                    <div class="row-data">Выше</div>
+                    <div class="row-data">Выше</div>
+                </div>
+                <div class="table-row">
+                    <div class="row-title">Лицензирование</div>
+                    <div class="row-data">Проприетарная</div>
+                    <div class="row-data">Архитектурная лицензия</div>
+                    <div class="row-data">Открытая, бесплатная</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Секция: Будущее -->
+    <section class="section future" id="future">
+        <div class="container">
+            <h2>ВЗГЛЯД В БУДУЩЕЕ: ЧТО ДАЛЬШЕ?</h2>
+            <div class="future-grid">
+
+
+<div class="future-tech">
+                    <div class="tech-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3>Оптические процессоры</h3>
+                    <p>Вычисления на свету вместо электронов. Скорость передачи данных на порядки выше</p>
+                </div>
+                <div class="future-tech">
+                    <div class="tech-icon">
+                        <i class="fas fa-project-diagram"></i>
+                    </div>
+                    <h3>Нейроморфные чипы</h3>
+                    <p>Архитектура, имитирующая нейронные сети мозга. Идеально для ИИ</p>
+                </div>
+                <div class="future-tech">
+                    <div class="tech-icon">
+                        <i class="fas fa-atom"></i>
+                    </div>
+                    <h3>Квантовые процессоры</h3>
+                    <p>Кубиты вместо битов. Экспоненциальный рост мощности для специфических задач</p>
+                </div>
+                <div class="future-tech">
+                    <div class="tech-icon">
+                        <i class="fas fa-dna"></i>
+                    </div>
+                    <h3>Биокомпьютеры</h3>
+                    <p>Использование молекул ДНК для хранения и обработки информации</p>
+                </div>
+            </div>
+        </div>
+                 </section>
+            </div>
+</body>
+    </html>
